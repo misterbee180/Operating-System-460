@@ -1,0 +1,61 @@
+#include "type.h"
+ #include <sys/types.h>
+#include <fcntl.h>
+#include <unistd.h>
+
+
+int main(argc, argv) int argc; char* argv[];
+{
+	int n;
+	int fd;
+	int gd;
+	int i = 0;
+	STAT a;
+	STAT k;
+	char buf[1024];
+	char* temp = NULL;
+	char b = '\0';
+	char c = '\r';
+	char tty[256];
+	gettty(tty);
+	//printf("%s\n",tty);
+
+	//printf("%d\n",a.st_mode);
+	//printf("%d\n",a.st_ino);	
+	//i = S_ISREG(a.st_mode);
+	
+	//printf("%d\n",i);
+	//getc();
+
+	if(argc == 1)
+	{
+		dup2(1,5);
+		close(1);
+		fd = open(tty,O_WRONLY);
+		printf("Cat From Stdin\n");
+		close(1);		
+		dup2(5,1);
+		fd = 0;
+	}
+	else
+	{
+		fd = open(argv[1],O_RDONLY);
+		if(fd < 0 ) exit(100);		
+	}
+
+	fstat(fd,&a);
+	fstat(1,&k);
+	while(n = read(fd,buf,1024))
+	{
+		temp = buf;
+		while(n)
+		{
+			putc(*temp);
+			temp++;
+			n--;
+		}	
+	}
+	close(fd);
+	close(1);
+	exit(0);
+}
